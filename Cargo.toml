@@ -1,0 +1,34 @@
+[package]
+name = "service-mqtt-ccpm-parser-v2-rs"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+name = "ccpm_parser"
+path = "src/lib.rs"
+
+[dependencies]
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "signal", "time"] }
+tokio-util = { version = "0.7", features = ["rt"] }
+rumqttc = { version = "0.24", default-features = false, features = ["use-native-tls"] }
+rdkafka = { version = "0.39", default-features = false, features = ["cmake-build", "tokio", "ssl", "sasl", "libz"] }
+redis = { version = "1.7", features = ["tokio-rustls-comp", "connection-manager"] }
+tonic = "0.14"
+axum = "0.8"
+tonic-prost = "0.14"
+prost = "0.14"
+prost-types = "0.14"
+reqwest = { version = "0.13", features = ["json", "query"] }
+dotenvy = "0.15"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+chrono = "0.4"
+uuid = { version = "1", features = ["v4"] }
+gethostname = "1"
+anyhow = "1"
+thiserror = "2"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+[build-dependencies]
+tonic-prost-build = "0.14"

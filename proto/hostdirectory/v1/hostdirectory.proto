@@ -1,0 +1,81 @@
+syntax = "proto3";
+
+package hostdirectory.v1;
+
+option go_package = "hostdirectory/v1;hostdirectoryv1";
+
+// Common timestamp (use google.protobuf.Timestamp)
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+// Request for fetching host by identifier
+message HostByIdentifierRequest {
+  string id_type = 1;     // e.g., "VIN", "PLATE", "IMEI" (string by design)
+  string id_value = 2;    // identifier value to match
+}
+
+message HostByIdRequest {
+  string host_id = 1;
+}
+
+message FetchHostsRequest {
+  google.protobuf.BoolValue has_board = 1;
+}
+
+// Core entities
+message Board {
+  string imei = 1;
+  string label = 2;
+  string type = 3;
+  google.protobuf.Timestamp created_at = 4;
+  google.protobuf.Timestamp effectiveTo = 5;
+}
+
+message HostIdentifier {
+  string id = 1;
+  string host_id = 2;
+  google.protobuf.Timestamp created_at = 3;
+  string id_type = 4;
+  string id_value = 5;
+  google.protobuf.Timestamp effective_from = 6;
+  google.protobuf.Timestamp effective_to = 7;
+}
+
+message HostCharacteristic {
+  string id = 1;
+  string host_id = 2;
+  string name = 3;
+  string value = 4;
+  google.protobuf.Timestamp created_at = 5;
+}
+
+message Host {
+  string host_id = 1;
+  string label = 2;
+  string type = 3;
+  google.protobuf.Timestamp created_at = 4;
+  repeated HostIdentifier identifiers = 5;
+  repeated Board boards = 6;
+  repeated HostCharacteristic characteristics = 7;
+  string initiative_id = 8;
+}
+
+// Response wrapper
+message HostByIdentifierResponse {
+  Host host = 1; // null when not found => server returns NOT_FOUND status
+}
+
+message HostByIdResponse {
+  Host host = 1; // server returns NOT_FOUND if missing
+}
+
+message FetchHostsResponse {
+  repeated Host hosts = 1; // empty when no matches
+}
+
+// Service
+service HostDirectory {
+  rpc HostByIdentifier(HostByIdentifierRequest) returns (HostByIdentifierResponse);
+  rpc HostById(HostByIdRequest) returns (HostByIdResponse);
+  rpc FetchHosts(FetchHostsRequest) returns (FetchHostsResponse);
+}
